@@ -67,8 +67,8 @@ Pacman.prototype.draw = function(color) {
 	}
 
 
-	
-	
+
+
 	ctx.lineTo(this.x, this.y);
 	ctx.fill();
 };
@@ -92,11 +92,11 @@ Pacman.prototype.canMove = function(dir) {
 Pacman.prototype.move = function() {
 	if(onGridCenter(this.x, this.y) === false){
 		//not on a grid center
-		if(this.nextDir != undefined &&  (
+		if(this.nextDir != undefined &&  (
 			(this.dir === UP && this.nextDir === DOWN )||
 			(this.dir === DOWN && this.nextDir === UP) ||
 			(this.dir === LEFT && this.nextDir === RIGHT) ||
- 			(this.dir === RIGHT && this.nextDir ===LEFT)
+ 			(this.dir === RIGHT && this.nextDir ===LEFT)
 			))
 		{
 			this.dir = this.nextDir;
@@ -120,7 +120,7 @@ Pacman.prototype.move = function() {
 			if(this.canMove(this.dir)){
 				this.moveOneStep();
 			}
-		}	
+		}
 	}
 };
 
@@ -134,7 +134,7 @@ Pacman.prototype.moveOneStep = function() {
 	switch(this.dir){
 
 		case UP:
-		newY = this.y  - speed;
+		newY = this.y  - speed;
 		if(newY - this.radius - WALL_WIDTH > 0){
 			this.y = newY;
 			this.mouthOpen = ! this.mouthOpen;
@@ -167,7 +167,7 @@ Pacman.prototype.moveOneStep = function() {
 			this.mouthOpen = ! this.mouthOpen;
 		}
 		break;
-		
+
 		default:
 		break;
 	}
@@ -202,14 +202,14 @@ Ghost.prototype.toGhostHouse = function() {
 			break;
 
 			case CYAN:
-			initX =  ghostHouse[1][1]*GRID_WIDTH + GRID_WIDTH/2;
-			initY =  ghostHouse[1][0]*GRID_WIDTH + GRID_WIDTH/2;
+			initX =  ghostHouse[1][1]*GRID_WIDTH + GRID_WIDTH/2;
+			initY =  ghostHouse[1][0]*GRID_WIDTH + GRID_WIDTH/2;
 			break;
 
 			case PINK:
 			initX = ghostHouse[2][1]*GRID_WIDTH + GRID_WIDTH/2;
 			initY = ghostHouse[2][0]*GRID_WIDTH + GRID_WIDTH/2;
-  			break;
+  			break;
 
 			case RED:
 			initX = ghostHouse[3][1]*GRID_WIDTH + GRID_WIDTH/2;
@@ -239,12 +239,12 @@ Ghost.prototype.draw = function() {
 		else{
 			ctx.fillStyle = this.color;
 		}
-		
+
 		ctx.beginPath();
 
 		ctx.arc(this.x, this.y, this.radius, Math.PI, 0, false);
 		ctx.moveTo(this.x-this.radius, this.y);
-		
+
 
 		// LEGS
 		if (!this.isMoving){
@@ -268,7 +268,7 @@ Ghost.prototype.draw = function() {
 			ctx.lineTo(this.x+this.radius, this.y+this.radius-this.radius/4);
 			ctx.lineTo(this.x+this.radius, this.y);
 		}
-		
+
 
 		ctx.fill();
 	}
@@ -374,7 +374,7 @@ Ghost.prototype.draw = function() {
 	}
 
 
-	
+
 };
 
 Ghost.prototype.getRow = function() {
@@ -396,7 +396,7 @@ Ghost.prototype.moveOneStep = function() {
 	switch(this.dir){
 
 		case UP:
-		newY = this.y  - this.speed;
+		newY = this.y  - this.speed;
 		if(newY - this.radius - WALL_WIDTH > 0){
 			this.y = newY;
 		}
@@ -425,7 +425,7 @@ Ghost.prototype.moveOneStep = function() {
 			this.x = newX;
 		}
 		break;
-		
+
 		default:
 		break;
 	}
@@ -611,28 +611,28 @@ Ghost.prototype.getTestDistance = function(dir, targetPacman) {
 	this.dir = dir;
 	this.moveOneStep();
 	if(targetPacman){
-		toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y -mrPacman.y,2));
+		toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y -mrPacman.y,2));
 	}
 	else{
 		switch(mrPacman.dir){
 			case LEFT:
-			toReturn = Math.sqrt(Math.pow( (this.x - (mrPacman.x - 4*GRID_WIDTH))  ,2)+Math.pow( this.y -mrPacman.y,2));
+			toReturn = Math.sqrt(Math.pow( (this.x - (mrPacman.x - 4*GRID_WIDTH))  ,2)+Math.pow( this.y -mrPacman.y,2));
 			break;
 
 			case RIGHT:
-			toReturn = Math.sqrt(Math.pow( (this.x - (mrPacman.x + 4*GRID_WIDTH))  ,2)+Math.pow( this.y -mrPacman.y,2));
+			toReturn = Math.sqrt(Math.pow( (this.x - (mrPacman.x + 4*GRID_WIDTH))  ,2)+Math.pow( this.y -mrPacman.y,2));
 			break;
 
 			case UP:
-			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y - (mrPacman.y - 4*GRID_HEIGHT),2));
+			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y - (mrPacman.y - 4*GRID_HEIGHT),2));
 			break;
 
 			case DOWN:
-			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y - (mrPacman.y  + 4*GRID_HEIGHT),2));
+			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y - (mrPacman.y  + 4*GRID_HEIGHT),2));
 			break;
 
 			default:
-			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y -mrPacman.y,2));
+			toReturn = Math.sqrt(Math.pow( (this.x - mrPacman.x)  ,2)+Math.pow( this.y -mrPacman.y,2));
 			break;
 
 		}
@@ -644,13 +644,13 @@ Ghost.prototype.getTestDistance = function(dir, targetPacman) {
 
 //make random move at intersection
 Ghost.prototype.randomMove = function() {
-	var nextDir =  parseInt(Math.random()*4)+1;
+	var nextDir =  parseInt(Math.random()*4)+1;
 	while(true){
-		if( nextDir != oppositeDir(this.dir) 
+		if( nextDir != oppositeDir(this.dir) 
 			&& canMove(this.x, this.y, nextDir)){
 			break;
 		}
-		nextDir =  parseInt(Math.random()*4)+1;
+		nextDir =  parseInt(Math.random()*4)+1;
 	}
 
 	this.dir = nextDir;
@@ -808,7 +808,7 @@ Grid.prototype.draw = function() {
 		default:
 		break;
 	}
-	this.drawBean();	
+	this.drawBean();
 };
 
 Grid.prototype.addLeftEdge = function() {
@@ -922,6 +922,73 @@ var DOWN = 2;
 var LEFT = 3;
 var RIGHT = 4;
 
+// SOUND: Sound loader object
+const gameSounds = {
+    _context: null,
+    _unlocked: false,
+    _activeSiren: null,
+    _activeFright: null,
+    _dotSoundIndex: 0,
+    init: function() {
+        this.start = new Audio('/sounds/start.wav');
+        this.death = new Audio('/sounds/death_1.wav');
+        this.eatGhost = new Audio('/sounds/eat_ghost.wav');
+        this.eatFruit = new Audio('/sounds/eat_fruit.wav');
+        this.dot1 = new Audio('/sounds/eat_dot_0.wav');
+        this.dot2 = new Audio('/sounds/eat_dot_1.wav');
+        this.siren = new Audio('/sounds/siren1.wav');
+        this.siren.loop = true;
+        this.fright = new Audio('/sounds/fright.wav');
+        this.fright.loop = true;
+    },
+    // SOUND: Function to unlock audio on user interaction
+    unlockAudio: function() {
+        if (this._unlocked) return;
+        this.start.play().then(() => this.start.pause()).catch(() => {});
+        this._unlocked = true;
+    },
+    play: function(soundName) {
+        if (!this._unlocked || !this[soundName]) return;
+        this[soundName].currentTime = 0;
+        this[soundName].play();
+    },
+    playDot: function() {
+        if (!this._unlocked) return;
+        const soundToPlay = this._dotSoundIndex === 0 ? this.dot1 : this.dot2;
+        soundToPlay.currentTime = 0;
+        soundToPlay.play();
+        this._dotSoundIndex = 1 - this._dotSoundIndex; // Alternate between 0 and 1
+    },
+    startSiren: function() {
+        if (!this._unlocked || this._activeSiren) return;
+        this.stopFright();
+        this.siren.currentTime = 0;
+        this.siren.play();
+        this._activeSiren = true;
+    },
+    stopSiren: function() {
+        if (!this._unlocked || !this._activeSiren) return;
+        this.siren.pause();
+        this._activeSiren = false;
+    },
+    startFright: function() {
+        if (!this._unlocked || this._activeFright) return;
+        this.stopSiren();
+        this.fright.currentTime = 0;
+        this.fright.play();
+        this._activeFright = true;
+    },
+    stopFright: function() {
+        if (!this._unlocked || !this._activeFright) return;
+        this.fright.pause();
+        this._activeFright = false;
+    },
+    stopAll: function() {
+        if (!this._unlocked) return;
+        this.stopSiren();
+        this.stopFright();
+    }
+};
 
 // game parameters
 var intervalId;
@@ -961,89 +1028,89 @@ var maze = new Array(CANVAS_HEIGHT/GRID_HEIGHT);
 var mazeContent = [
 //row1
 [LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM, TOP_ONLY, TOP_BOTTOM,
- TOP_BOTTOM, TOP_BOTTOM, RIGHT_TOP, LEFT_TOP, TOP_ONLY,
- TOP_ONLY, TOP_ONLY, TOP_ONLY, TOP_ONLY, TOP_ONLY,
- TOP_ONLY, RIGHT_TOP],
+ TOP_BOTTOM, TOP_BOTTOM, RIGHT_TOP, LEFT_TOP, TOP_ONLY,
+ TOP_ONLY, TOP_ONLY, TOP_ONLY, TOP_ONLY, TOP_ONLY,
+ TOP_ONLY, RIGHT_TOP],
 //row2
 [LEFT_RIGHT, BOTTOM_LEFT_TOP, RIGHT_TOP, LEFT_RIGHT, LEFT_TOP,
- TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_BOTTOM, BOTTOM_ONLY,
- BOTTOM_ONLY, BOTTOM_ONLY, BOTTOM_ONLY, BOTTOM_ONLY, EMPTY_GRID,
- EMPTY_GRID, RIGHT_ONLY],
+ TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_BOTTOM, BOTTOM_ONLY,
+ BOTTOM_ONLY, BOTTOM_ONLY, BOTTOM_ONLY, BOTTOM_ONLY, EMPTY_GRID,
+ EMPTY_GRID, RIGHT_ONLY],
 //row3
 [LEFT_BOTTOM, RIGHT_TOP, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT,
- BOTTOM_LEFT_TOP, TOP_BOTTOM, EMPTY_GRID, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, RIGHT_TOP, LEFT_ONLY, 
- EMPTY_GRID, RIGHT_ONLY],
+ BOTTOM_LEFT_TOP, TOP_BOTTOM, EMPTY_GRID, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, RIGHT_TOP, LEFT_ONLY, 
+ EMPTY_GRID, RIGHT_ONLY],
 //row4
-[CLOSED_GRID, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, LEFT_BOTTOM, 
- TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM,
- TOP_BOTTOM, TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY,
- EMPTY_GRID, RIGHT_ONLY],
+[CLOSED_GRID, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, LEFT_BOTTOM, 
+ TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM,
+ TOP_BOTTOM, TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY,
+ EMPTY_GRID, RIGHT_ONLY],
 //row5
-[LEFT_TOP, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_BOTTOM, TOP_ONLY, 
- TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, TOP_ONLY, TOP_BOTTOM, RIGHT_BOTTOM, LEFT_ONLY,
- EMPTY_GRID, RIGHT_ONLY],
+[LEFT_TOP, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_BOTTOM, TOP_ONLY, 
+ TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_BOTTOM, TOP_ONLY, TOP_BOTTOM, RIGHT_BOTTOM, LEFT_ONLY,
+ EMPTY_GRID, RIGHT_ONLY],
 //row6
 [LEFT_RIGHT, BOTTOM_LEFT_TOP, BOTTOM_ONLY, TOP_RIGHT_BOTTOM, LEFT_RIGHT,
- BOTTOM_LEFT_TOP, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_TOP, TOP_BOTTOM,
- RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, BOTTOM_ONLY, 
- BOTTOM_ONLY, RIGHT_BOTTOM],
+ BOTTOM_LEFT_TOP, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_TOP, TOP_BOTTOM,
+ RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, BOTTOM_ONLY, 
+ BOTTOM_ONLY, RIGHT_BOTTOM],
 //row7
-[LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, 
- TOP_BOTTOM, TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_TOP_RIGHT, 
- LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, RIGHT_TOP],
+[LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, 
+ TOP_BOTTOM, TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_TOP_RIGHT, 
+ LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_BOTTOM, RIGHT_TOP],
 //row8
 [LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, 
- LEFT_RIGHT, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM,
- TOP_RIGHT_BOTTOM, LEFT_RIGHT],
+ TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, 
+ LEFT_RIGHT, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_RIGHT_BOTTOM, LEFT_RIGHT],
 //row9
 [LEFT_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, TOP_ONLY,
- TOP_BOTTOM, TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_RIGHT, 
- LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, RIGHT_ONLY],
+ TOP_BOTTOM, TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_RIGHT, 
+ LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_BOTTOM, RIGHT_ONLY],
 //row10
-[LEFT_TOP, TOP_ONLY, TOP_ONLY, RIGHT_TOP, LEFT_RIGHT, 
- BOTTOM_LEFT_TOP, TOP_RIGHT_BOTTOM, LEFT_RIGHT, RIGHT_BOTTOM_LEFT, LEFT_RIGHT,
- RIGHT_BOTTOM_LEFT, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM,
- TOP_RIGHT_BOTTOM, LEFT_RIGHT],
+[LEFT_TOP, TOP_ONLY, TOP_ONLY, RIGHT_TOP, LEFT_RIGHT, 
+ BOTTOM_LEFT_TOP, TOP_RIGHT_BOTTOM, LEFT_RIGHT, RIGHT_BOTTOM_LEFT, LEFT_RIGHT,
+ RIGHT_BOTTOM_LEFT, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_RIGHT_BOTTOM, LEFT_RIGHT],
 //row11
 [LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_ONLY,
- TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, TOP_ONLY, BOTTOM_ONLY, 
- TOP_BOTTOM, BOTTOM_ONLY, TOP_ONLY, TOP_BOTTOM, TOP_BOTTOM,
- TOP_BOTTOM, RIGHT_ONLY],
+ TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, TOP_ONLY, BOTTOM_ONLY, 
+ TOP_BOTTOM, BOTTOM_ONLY, TOP_ONLY, TOP_BOTTOM, TOP_BOTTOM,
+ TOP_BOTTOM, RIGHT_ONLY],
 //row12
-[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
- BOTTOM_LEFT_TOP, TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP,
- TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM,
- RIGHT_TOP, LEFT_RIGHT],
+[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
+ BOTTOM_LEFT_TOP, TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP,
+ TOP_BOTTOM, RIGHT_TOP, LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM,
+ RIGHT_TOP, LEFT_RIGHT],
 //row13
 [LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_ONLY,
- TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM,
- TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, RIGHT_TOP,
- LEFT_RIGHT, LEFT_RIGHT],
+ TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM,
+ TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_ONLY, TOP_BOTTOM, RIGHT_TOP,
+ LEFT_RIGHT, LEFT_RIGHT],
 //row14
-[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
- LEFT_TOP, TOP_BOTTOM, RIGHT_BOTTOM, LEFT_RIGHT, BOTTOM_LEFT_TOP,
- TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_TOP_RIGHT, LEFT_RIGHT, 
- LEFT_RIGHT, LEFT_RIGHT],
+[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
+ LEFT_TOP, TOP_BOTTOM, RIGHT_BOTTOM, LEFT_RIGHT, BOTTOM_LEFT_TOP,
+ TOP_BOTTOM, RIGHT_ONLY, LEFT_RIGHT, LEFT_TOP_RIGHT, LEFT_RIGHT, 
+ LEFT_RIGHT, LEFT_RIGHT],
 //row15
-[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
- LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, EMPTY_GRID, TOP_BOTTOM,
- TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT,
- LEFT_RIGHT, LEFT_RIGHT],
+[LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT, 
+ LEFT_RIGHT, BOTTOM_LEFT_TOP, TOP_BOTTOM, EMPTY_GRID, TOP_BOTTOM,
+ TOP_RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT,
+ LEFT_RIGHT, LEFT_RIGHT],
 //row16
 [LEFT_ONLY, EMPTY_GRID, EMPTY_GRID, RIGHT_ONLY, LEFT_RIGHT,
- LEFT_BOTTOM, TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, BOTTOM_LEFT_TOP,
- TOP_BOTTOM, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT,
- RIGHT_BOTTOM_LEFT, LEFT_RIGHT],
+ LEFT_BOTTOM, TOP_BOTTOM, TOP_RIGHT_BOTTOM, LEFT_RIGHT, BOTTOM_LEFT_TOP,
+ TOP_BOTTOM, RIGHT_BOTTOM, LEFT_RIGHT, LEFT_RIGHT, LEFT_RIGHT,
+ RIGHT_BOTTOM_LEFT, LEFT_RIGHT],
 //row17
 [LEFT_BOTTOM, BOTTOM_ONLY, BOTTOM_ONLY, RIGHT_BOTTOM, LEFT_BOTTOM,
- TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, TOP_BOTTOM, 
- TOP_BOTTOM, TOP_BOTTOM, RIGHT_BOTTOM, RIGHT_BOTTOM_LEFT, LEFT_BOTTOM,
- TOP_BOTTOM, RIGHT_BOTTOM]
+ TOP_BOTTOM, TOP_BOTTOM, TOP_BOTTOM, BOTTOM_ONLY, TOP_BOTTOM, 
+ TOP_BOTTOM, TOP_BOTTOM, RIGHT_BOTTOM, RIGHT_BOTTOM_LEFT, LEFT_BOTTOM,
+ TOP_BOTTOM, RIGHT_BOTTOM]
 ];
 
 // grids that don't redraw
@@ -1095,7 +1162,7 @@ function initMaze(){
 		for(var col = 0; col < CANVAS_WIDTH/GRID_WIDTH; col++){
 			var beanType = NORMAL_BEAN;
 			var newGrid = new Grid(col*GRID_WIDTH,row*GRID_HEIGHT , mazeContent[row][col],beanType);
-			
+
 			maze[row][col] = newGrid;
 			newGrid.draw();
 		}
@@ -1232,8 +1299,8 @@ function initFields () {
 function circle(ctx, cx, cy, radius) {
 
 	ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, 2*Math.PI, true);
-    ctx.fill();
+    ctx.arc(cx, cy, radius, 0, 2*Math.PI, true);
+    ctx.fill();
 
 }
 
@@ -1288,23 +1355,23 @@ function fixGrids (x, y) {
 	var col = getColIndex(x);
 
 	if(xOnGridCenter(y)){
- 		maze[row][col].draw();
- 		if(col+1 < maze.length && !staticArrayContains([row, col+1])){
- 			maze[row][col+1].draw();
- 		}
- 		if(col-1 >= 0 && !staticArrayContains([row, col-1])){
- 			maze[row][col-1].draw();
- 		}
- 	}
- 	else if(yOnGridCenter(x)){
- 		maze[row][col].draw();
- 		if(row+1 < maze.length  && !staticArrayContains([row+1, col])){
- 			maze[row+1][col].draw();
- 		}
- 		if(row-1 >=0 && !staticArrayContains([row-1,col]) ){
- 			maze[row-1][col].draw();
- 		}
- 	}
+ 		maze[row][col].draw();
+ 		if(col+1 < maze.length && !staticArrayContains([row, col+1])){
+ 			maze[row][col+1].draw();
+ 		}
+ 		if(col-1 >= 0 && !staticArrayContains([row, col-1])){
+ 			maze[row][col-1].draw();
+ 		}
+ 	}
+ 	else if(yOnGridCenter(x)){
+ 		maze[row][col].draw();
+ 		if(row+1 < maze.length  && !staticArrayContains([row+1, col])){
+ 			maze[row+1][col].draw();
+ 		}
+ 		if(row-1 >=0 && !staticArrayContains([row-1,col]) ){
+ 			maze[row-1][col].draw();
+ 		}
+ 	}
 }
 
 function staticArrayContains(cord) {
@@ -1354,7 +1421,7 @@ function canMove (x,y,dir) {
 	switch(dir){
 		case UP:
 		if(gridType != LEFT_TOP && gridType != RIGHT_TOP && gridType != TOP_BOTTOM
-			&& gridType != TOP_ONLY && gridType!= LEFT_TOP_RIGHT 
+			&& gridType != TOP_ONLY && gridType!= LEFT_TOP_RIGHT 
 			&& gridType != TOP_RIGHT_BOTTOM && gridType!= BOTTOM_LEFT_TOP){
 			canMove = true;
 		}
@@ -1378,7 +1445,7 @@ function canMove (x,y,dir) {
 
 		case RIGHT:
 		if(gridType != RIGHT_BOTTOM && gridType != RIGHT_TOP && gridType != RIGHT_ONLY
-			&& gridType != LEFT_RIGHT && gridType!= RIGHT_BOTTOM_LEFT 
+			&& gridType != LEFT_RIGHT && gridType!= RIGHT_BOTTOM_LEFT 
 			&& gridType != TOP_RIGHT_BOTTOM && gridType != LEFT_TOP_RIGHT){
 			canMove = true;
 		}
@@ -1408,7 +1475,7 @@ function printInstruction () {
 	var lines = txt.split('\n');
 
 	for (var i = 0; i<lines.length; i++)
-	    ctx.fillText(lines[i], x, y + (i*lineheight) );
+	    ctx.fillText(lines[i], x, y + (i*lineheight) );
 
 	if (ghosts.length === 0){
 		ctx.fillStyle = "black";
@@ -1445,7 +1512,7 @@ function welcomeScreen(){
 	ctx.font = "20px monospace";
 	ctx.fillText("Press s to start", CANVAS_WIDTH/2, 220);
 	ctx.font = "14px monospace";
-	
+
 	welcomePacman = new Pacman(CANVAS_WIDTH/5, CANVAS_HEIGHT/3*2, RIGHT);
 	welcomePacman.radius = 30;
 	welcomePacman.draw();
@@ -1498,7 +1565,7 @@ function saveGame(win = false)
 		game_duration.value = (Date.now() - start_time)/1000;
 		save_game.disabled = false;
 	}
-} 
+} 
 //show win message
 function winMessage(){
 	//draw popup
@@ -1537,12 +1604,14 @@ function loseMessage(){
 	saveGame(false);
 }
 
-//update canvas for each frame. 
+//update canvas for each frame. 
 function updateCanvas() {
 	restartTimer++;
 	if (gameOver()===true){
+		// SOUND: Stop all background music and play death sound
+        gameSounds.stopAll();
+        gameSounds.play('death');
 		life--;
-		// mrPacman.dieAnimation();
 		showLives();
 		if (life>0){
 			sleep(500);
@@ -1551,16 +1620,18 @@ function updateCanvas() {
 			for(var i=0; i<ghosts.length; i++){
 				fixGrids(ghosts[i].x, ghosts[i].y);
 			}
-			run();	
+			run();
 		}
 		else {
 			clearInterval(intervalId);
 			sleep(500);
 			loseMessage();
 		}
-		
+
 	}
 	else if (pacmanWon()===true){
+        // SOUND: Stop all sounds on win
+        gameSounds.stopAll();
 		clearInterval(intervalId);
 		sleep(500);
 		winMessage();
@@ -1575,6 +1646,9 @@ function updateCanvas() {
 			weakCounter--;
 		}
 		if(weakCounter===0){
+			// SOUND: Fright mode ended, go back to siren
+            gameSounds.stopFright();
+            gameSounds.startSiren();
 			for(var i=0; i<ghosts.length; i++){
 				ghosts[i].isDead = false;
 				ghosts[i].isWeak = false;
@@ -1598,8 +1672,8 @@ function updateCanvas() {
 			fixGrids(ghosts[i].x, ghosts[i].y);
 		}
 
-	    mrPacman.draw();
-	    for(var i=0; i<ghosts.length; i++){
+	    mrPacman.draw();
+	    for(var i=0; i<ghosts.length; i++){
 			ghosts[i].draw();
 		}
 	}
@@ -1609,11 +1683,16 @@ function updateCanvas() {
 function eatBean () {
 	if(onGridCenter(mrPacman.x, mrPacman.y)){
 		if(maze[mrPacman.getRow()][mrPacman.getCol()].beanType===NORMAL_BEAN){
+			// SOUND: Play dot eating sound
+            gameSounds.playDot();
 			score+= parseInt(10);
 			showScore();
 			beansLeft--;
 		}
 		else if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType===POWER_BEAN){
+			// SOUND: Play power pellet sound and switch to fright music
+            gameSounds.play('eatFruit');
+            gameSounds.startFright();
 			score+=parseInt(50);
 			showScore();
 			beansLeft--;
@@ -1634,6 +1713,8 @@ function eatGhost () {
 	for(var i=0; i<ghosts.length; i++){
 		if(Math.abs(mrPacman.x-ghosts[i].x)<=5 && Math.abs(mrPacman.y-ghosts[i].y)<=5
 			&& ghosts[i].isWeak && !ghosts[i].isDead){
+            // SOUND: Play eat ghost sound
+            gameSounds.play('eatGhost');
 			score += parseInt( weakBonus);
 			weakBonus *=2;
 			showScore();
@@ -1670,22 +1751,24 @@ function countDown () {
 		ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
 		ctx.fillStyle = "orange";
 		ctx.fillText("2",CANVAS_HEIGHT-43, 130);
-		setTimeout(function  () {
+		setTimeout(function  () {
 				ctx.fillStyle = "black";
 			ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
 			ctx.fillStyle = "yellow";
 			ctx.fillText("1",CANVAS_HEIGHT-43, 130);
-			setTimeout(function  () {
+			setTimeout(function  () {
 				ctx.fillStyle = "black";
 				ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
 				ctx.fillStyle = "green";
 				ctx.textAlign = "center";
 				ctx.fillText("GO",CANVAS_HEIGHT-43, 130);
-				setTimeout(function  () {
+				setTimeout(function  () {
+                    // SOUND: Start background siren when game starts
+                    gameSounds.startSiren();
 					intervalId = setInterval(updateCanvas, timerDelay);
 				},500);
 			}, 1000);
-		}, 1000);	
+		}, 1000);
 	}, 1000);
 }
 /*==================END UI Update Methods================*/
@@ -1701,7 +1784,7 @@ function onKeyDown (event) {
 	var godModeCode = 71; //g to enter god mode
 
 	// wasd
-	var wCode = 87; 
+	var wCode = 87; 
 	var aCode = 65;
 	var sCode = 83;
 	var dCode = 68;
@@ -1721,7 +1804,11 @@ function onKeyDown (event) {
 	}
 	//start game
 	if(!gameOn){
+        // SOUND: Unlock audio context on first user interaction
+        gameSounds.unlockAudio();
 		if(keycode === sCode){
+			// SOUND: Play start music
+            gameSounds.play('start');
 			high_score = parseInt(highScoreDisplay.innerHTML);
 			clearInterval(intervalId);
 			gameOn = true;
@@ -1732,6 +1819,8 @@ function onKeyDown (event) {
 			return;
 		}
 		else if(keycode === godModeCode){
+			// SOUND: Play start music
+            gameSounds.play('start');
 			clearInterval(intervalId);
 			ghosts = [];
 			gameOn = true;
@@ -1746,6 +1835,8 @@ function onKeyDown (event) {
 
 		//pause game
 		if(keycode === pauseCode && !gamePaused){
+            // SOUND: Stop sounds on pause
+            gameSounds.stopAll();
 			high_score = parseInt(highScoreDisplay.innerHTML);
 			clearInterval(intervalId);
 			gamePaused = true;
@@ -1755,6 +1846,8 @@ function onKeyDown (event) {
 
 		//resume game
 		if(keycode === continueCode && gamePaused){
+            // SOUND: Resume background music
+            gameSounds.startSiren();
 			intervalId = setInterval(updateCanvas, timerDelay);
 			gamePaused = false;
 			if (save_game!= null)
@@ -1766,10 +1859,13 @@ function onKeyDown (event) {
 
 		//restart game
 		if( keycode === restartCode && restartTimer > 0) {
-			//can't restart game if a game was just refreshed.
+            // SOUND: Stop all sounds before restarting
+            gameSounds.stopAll();
 			high_score = parseInt(highScoreDisplay.innerHTML);
 			restartTimer = 0;
 			clearInterval(intervalId);
+			// SOUND: Play start music
+            gameSounds.play('start');
 			gameOn = true;
 			gamePaused = false;
 			score = 0;
@@ -1810,28 +1906,28 @@ function onKeyDown (event) {
 			break;
 
 		}
-	}	
+	}
 }
 
 //run the game. Create mrPacman and 4 ghosts. Reset their positions.
 function run(isGodMode) {
 	showScore();
-    
-    mrPacman = new Pacman(pacmanStartLoc[1]*GRID_WIDTH + GRID_WIDTH/2, pacmanStartLoc[0]*GRID_HEIGHT + GRID_HEIGHT/2, RIGHT);
-    if(isGodMode===undefined || !isGodMode){
-	    blinky = new Ghost(0,0, RED, DOWN);
-	    inky = new Ghost(0,0, CYAN, DOWN);
-	    pinky = new Ghost(0,0, PINK, DOWN);
-	    clyde = new Ghost(0,0, ORANGE, DOWN);
+    
+    mrPacman = new Pacman(pacmanStartLoc[1]*GRID_WIDTH + GRID_WIDTH/2, pacmanStartLoc[0]*GRID_HEIGHT + GRID_HEIGHT/2, RIGHT);
+    if(isGodMode===undefined || !isGodMode){
+	    blinky = new Ghost(0,0, RED, DOWN);
+	    inky = new Ghost(0,0, CYAN, DOWN);
+	    pinky = new Ghost(0,0, PINK, DOWN);
+	    clyde = new Ghost(0,0, ORANGE, DOWN);
 
-	    blinky.toGhostHouse();
-	    inky.toGhostHouse();
-	    pinky.toGhostHouse();
-	    clyde.toGhostHouse();
+	    blinky.toGhostHouse();
+	    inky.toGhostHouse();
+	    pinky.toGhostHouse();
+	    clyde.toGhostHouse();
 
-	    ghosts = [blinky, inky, pinky, clyde];
+	    ghosts = [blinky, inky, pinky, clyde];
 
-	    inky.draw();
+	    inky.draw();
 		blinky.draw();
 		pinky.draw();
 		clyde.draw();
@@ -1852,9 +1948,9 @@ function run(isGodMode) {
 /*-----------GAME START-----------*/
 initFields();
 initCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+// SOUND: Initialize the sound object
+gameSounds.init();
 canvas.addEventListener('keydown', onKeyDown, false);
 canvas.setAttribute('tabindex','0');
 canvas.focus();
 welcomeScreen();
-
-
