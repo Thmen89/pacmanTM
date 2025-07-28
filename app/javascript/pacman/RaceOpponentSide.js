@@ -868,15 +868,14 @@ Grid.prototype.drawBean = function() {
 // Group members: Zi Wang (ziw), Bingying Xia(bxia) //
 //////////////////////////////////////////////////////
 
-var canvasID = "myCanvas";
+var canvasID = "opponentCanvas";
 var canvas = document.getElementById(canvasID);
 
 var CANVAS_WIDTH = 510;
 var CANVAS_HEIGHT = 510;
 
-var scoreID = "my_score";
+var scoreID = "op_score";
 var display = document.getElementById(scoreID);
-
 var start_time;
 var ctx = canvas.getContext("2d");
 // game grid
@@ -914,9 +913,9 @@ var RIGHT = 4;
 
 
 // game parameters
-var intervalId;
+export var intervalId;
 var restartTimer = 0;
-var timerDelay = 80;
+export var timerDelay = 80;
 var speed = 5;
 var score = 0;
 var lives = [];
@@ -947,8 +946,8 @@ var ghosts;
 //game state and map
 var gameOn = false;
 var gamePaused = false;
-var maze = new Array(CANVAS_HEIGHT/GRID_HEIGHT);
-var mazeContent = [
+export var maze = new Array(CANVAS_HEIGHT/GRID_HEIGHT);
+export var mazeContent = [
 //row1
 [LEFT_TOP, TOP_BOTTOM, TOP_BOTTOM, TOP_ONLY, TOP_BOTTOM,
  TOP_BOTTOM, TOP_BOTTOM, RIGHT_TOP, LEFT_TOP, TOP_ONLY,
@@ -1074,7 +1073,7 @@ function initCanvas(width, height){
 }
 
 // draw maze, print instruction on lower-left corner, show lives on top-right corner
-function initMaze(){
+export function initMaze(){
 	for(var i=0; i<maze.length; i++){
 		var oneRow = new Array(CANVAS_WIDTH/GRID_WIDTH);
 		maze[i] = oneRow;
@@ -1399,6 +1398,7 @@ function printInstruction () {
 
 	for (var i = 0; i<lines.length; i++)
 	    ctx.fillText(lines[i], x, y + (i*lineheight) );
+
 }
 
 //draw lives on top-right corner
@@ -1416,9 +1416,8 @@ function showLives(){
 export function welcomeScreen() {
 	initFields();
 	initCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	canvas.addEventListener('keydown', onKeyDown, false);
 	canvas.setAttribute('tabindex','0');
-	canvas.focus();
+	console.log("hello");
 	gameOn = true;
 	gamePaused = false;
 	initMaze();
@@ -1428,7 +1427,7 @@ export function welcomeScreen() {
 }
 
 //welcome screen animation
-function updateWelcomeScreen () {
+export function updateWelcomeScreen () {
 	ctx.fillStyle = BG_COLOR;
 	ctx.fillRect(0, CANVAS_HEIGHT/2, CANVAS_WIDTH,140);
 	welcomePacman.mouthOpen = !welcomePacman.mouthOpen;
@@ -1465,7 +1464,7 @@ function saveGame(win = false)
 function winMessage(){
 	//draw popup
 	ctx.fillStyle = "black";
-	ctx.strokeStyle = "green";
+	ctx.strokeStyle = "red";
 	ctx.lineWidth=5;
 	ctx.fillRect(CANVAS_WIDTH/2-150, CANVAS_HEIGHT/2-40, 300, 100);
 	ctx.strokeRect(CANVAS_WIDTH/2-150, CANVAS_HEIGHT/2-40, 300, 100);
@@ -1474,7 +1473,8 @@ function winMessage(){
 	ctx.textAlign="center";
 	ctx.fillStyle = "white";
 	ctx.font = "16px monospace";
-	ctx.fillText("Congratulations, you won!", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+6);
+	ctx.fillText("Your Opponent won the game ;-;", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+6);
+	ctx.font = "12px monospace";
 	//saveGame(true);
 }
 
@@ -1482,7 +1482,7 @@ function winMessage(){
 function loseMessage(){
 	//draw popup
 	ctx.fillStyle = "black";
-	ctx.strokeStyle = "red";
+	ctx.strokeStyle = "green";
 	ctx.lineWidth=5;
 	ctx.fillRect(CANVAS_WIDTH/2-100, CANVAS_HEIGHT/2-40, 200, 100);
 	ctx.strokeRect(CANVAS_WIDTH/2-100, CANVAS_HEIGHT/2-40, 200, 100);
@@ -1491,9 +1491,8 @@ function loseMessage(){
 	ctx.textAlign="center";
 	ctx.fillStyle = "red";
 	ctx.font = "26px monospace";
-	ctx.fillText("GAME OVER", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+7);
+	ctx.fillText("Your Opponent lost to the ghosts! You Win!", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+7);
 	ctx.font = "12px monospace";
-	ctx.fillText("press R to play again", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+28);
 	//saveGame(false);
 }
 
@@ -1652,24 +1651,24 @@ function countDown () {
 
 
 /*==================Game Control Methods===================*/
-//listen to keyDown event
-function onKeyDown (event) {
-	var keycode = event.keyCode;
-	var pauseCode = 81; //q to pause
-	var continueCode = 69; //e to resume
-	var restartCode = 82; //r to restart
-	var godModeCode = 71; //g to enter god mode
+export function play_move_opponent_side(params) {
+	var keycode = params.move;
+    console.log("Opponent made move: "+ params.move);
+	var pauseCode = 'KeyQ'; //q to pause
+	var continueCode = 'KeyE'; //e to resume
+	var restartCode = 'KeyR'; //r to restart
+	var godModeCode = 'KeyG'; //g to enter god mode
 
 	// wasd
-	var wCode = 87; 
-	var aCode = 65;
-	var sCode = 83;
-	var dCode = 68;
+	var wCode = 'KeyW'; 
+	var aCode = 'KeyA';
+	var sCode = 'KeyS';
+	var dCode = 'KeyD';
 	//arrow keys
-	var leftCode = 37;
-	var upCode = 38;
-	var rightCode = 39;
-	var downCode = 40;
+	var leftCode = 'ArrowLeft';
+	var upCode = 'ArrowUp';
+	var rightCode = 'ArrowRight';
+	var downCode = 'ArrowDown';
 
 	var setTime = function ()
 	{
@@ -1683,7 +1682,9 @@ function onKeyDown (event) {
 	if(!gameOn){
 		if(keycode === sCode){
 			//high_score = parseInt(highScoreDisplay.innerHTML);
-			clearInterval(intervalId);
+			console.log(intervalId);
+			clearInterval(3);
+			clearInterval(4);
 			gameOn = true;
 			gamePaused = false;
 			initMaze();
@@ -1692,7 +1693,6 @@ function onKeyDown (event) {
 			return;
 		}
 		else if(keycode === godModeCode){
-			console.log(intervalId);
 			clearInterval(intervalId);
 			ghosts = [];
 			gameOn = true;
@@ -1775,7 +1775,7 @@ function onKeyDown (event) {
 }
 
 //run the game. Create mrPacman and 4 ghosts. Reset their positions.
-function run(isGodMode) {
+export function run(isGodMode) {
     showScore();
     
     mrPacman = new Pacman(pacmanStartLoc[1]*GRID_WIDTH + GRID_WIDTH/2, pacmanStartLoc[0]*GRID_HEIGHT + GRID_HEIGHT/2, RIGHT);
@@ -1809,8 +1809,6 @@ function run(isGodMode) {
     countDown();
 }
 /*===============END Game Control Methods===================*/
-
-
 
 /*-----------GAME START-----------*/
 //welcomeScreen();
