@@ -34,7 +34,7 @@ Following features are currently in development:
 * Adding supercool sound effects to the game.
 
 ## Prerequisites
-* Ruby >=2.7.2
+* Ruby >=2.7.3-apache
 * Rails 6.1.3.1
 * Redis >=3.0
 
