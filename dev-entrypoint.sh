@@ -20,5 +20,9 @@ fi
 # Install gems if they are not already installed
 bundle check || bundle install
 
+# ✅ RUN MIGRATIONS
+echo "Running database migrations..."
+bundle exec rails db:migrate
+
 # Then exec the container's main process
 exec "$@"
