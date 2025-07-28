@@ -1776,35 +1776,37 @@ function onKeyDown (event) {
 
 //run the game. Create mrPacman and 4 ghosts. Reset their positions.
 function run(isGodMode) {
-	showScore();
+    showScore();
     
     mrPacman = new Pacman(pacmanStartLoc[1]*GRID_WIDTH + GRID_WIDTH/2, pacmanStartLoc[0]*GRID_HEIGHT + GRID_HEIGHT/2, RIGHT);
-    if(isGodMode===undefined || !isGodMode){
-	    blinky = new Ghost(0,0, RED, DOWN);
-	    inky = new Ghost(0,0, CYAN, DOWN);
-	    pinky = new Ghost(0,0, PINK, DOWN);
-	    clyde = new Ghost(0,0, ORANGE, DOWN);
+    if(isGodMode === undefined || !isGodMode){
+        // Initialize the four ghosts
+        blinky = new Ghost(0, 0, RED, DOWN);
+        inky = new Ghost(0, 0, CYAN, DOWN);
+        pinky = new Ghost(0, 0, PINK, DOWN);
+        clyde = new Ghost(0, 0, ORANGE, DOWN);
 
-	    blinky.toGhostHouse();
-	    inky.toGhostHouse();
-	    pinky.toGhostHouse();
-	    clyde.toGhostHouse();
+        // Send ghosts to their starting positions in the ghost house
+        blinky.toGhostHouse();
+        inky.toGhostHouse();
+        pinky.toGhostHouse();
+        clyde.toGhostHouse();
 
-	    ghosts = [blinky, inky, pinky, clyde];
-		ghosts = [];
-	    inky.draw();
-		blinky.draw();
-		pinky.draw();
-		clyde.draw();
-	}
-	else{
-		ghosts = [];
-	}
-	showLives();
-	printInstruction();
+        ghosts = [blinky, inky, pinky, clyde];
 
-	mrPacman.draw();
-	countDown();
+        // Draw ghosts initially
+        blinky.draw();
+        inky.draw();
+        pinky.draw();
+        clyde.draw();
+    } else {
+        ghosts = [];
+    }
+    showLives();
+    printInstruction();
+
+    mrPacman.draw();
+    countDown();
 }
 /*===============END Game Control Methods===================*/
 
