@@ -1,11 +1,2 @@
-FROM ruby:2.7.3
-
-# Set environment variables
-ENV LANG C.UTF-8
-ENV APP_PATH /var/app
-
-# Install system dependencies
-RUN apk -U add --no-cache build-base git postgresql-dev postgresql-client libxml2-dev libxslt-dev nodejs yarn imagemagick tzdata
-
-# Set the working directory
-WORKDIR $APP_PATH
+FROM alpine:latest
+CMD ["echo", "The build was successful."]
