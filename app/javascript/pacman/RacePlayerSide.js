@@ -1879,7 +1879,7 @@ async function updateCanvas() {
 
 async function loseMessage() {
     ctx.fillStyle = "black";
-    ctx.strokeStyle = "red';
+    ctx.strokeStyle = "red";
     ctx.lineWidth = 5;
     ctx.fillRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
     ctx.strokeRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
