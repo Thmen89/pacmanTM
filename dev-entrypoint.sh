@@ -20,6 +20,9 @@ fi
 # Install gems if they are not already installed
 bundle check || bundle install
 
+# Install JS dependencies
+yarn install --check-files
+
 # Compile webpacker assets
 bundle exec rails webpacker:compile
 
