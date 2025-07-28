@@ -9,9 +9,14 @@ canvas.addEventListener('click', () => {
     if (audioCtx.state === 'suspended') {
         audioCtx.resume().then(() => {
             console.log('AudioContext resumed');
+            // Test sound after resuming
+            playSound('credit', false, 0.7);
         }).catch(err => console.error('Error resuming AudioContext:', err));
     }
 });
+
+// Log initial AudioContext state
+console.log('Initial AudioContext state:', audioCtx.state);
 // Object to store loaded sounds
 const sounds = {};
 
