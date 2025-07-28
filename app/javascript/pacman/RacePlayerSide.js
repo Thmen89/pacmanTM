@@ -1965,43 +1965,6 @@ function saveGame(win = false)
 } 
 
 
-//try to eat a bean
-function eatBean () {
-	if(onGridCenter(mrPacman.x, mrPacman.y)){
-		if(maze[mrPacman.getRow()][mrPacman.getCol()].beanType===NORMAL_BEAN){
-			score+= parseInt(10);
-			showScore();
-			beansLeft--;
-		}
-		else if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType===POWER_BEAN){
-			score+=parseInt(50);
-			showScore();
-			beansLeft--;
-
-			//ghosts enter weak mode
-			for(var i=0; i<ghosts.length; i++){
-				ghosts[i].isWeak=true;
-			}
-			weakCounter=WEAK_DURATION;
-		}
-		maze[mrPacman.getRow()][mrPacman.getCol()].beanType=undefined;
-		maze[mrPacman.getRow()][mrPacman.getCol()].draw();
-	}
-}
-
-//try to eat a weak ghost
-function eatGhost () {
-	for(var i=0; i<ghosts.length; i++){
-		if(Math.abs(mrPacman.x-ghosts[i].x)<=5 && Math.abs(mrPacman.y-ghosts[i].y)<=5
-			&& ghosts[i].isWeak && !ghosts[i].isDead){
-			score += parseInt( weakBonus);
-			weakBonus *=2;
-			showScore();
-			ghosts[i].isDead = true;
-			ghosts[i].toGhostHouse();
-		}
-	}
-}
 
 function gameOver(){
 	for(var i=0; i<ghosts.length; i++){
