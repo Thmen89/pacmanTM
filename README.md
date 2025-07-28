@@ -1,5 +1,5 @@
 # Rails Pacman webapp
-Ruby on rails webapp to play pacman in single player and multiplayer mode. Fork for usage on Ugreen Nas systems (Linux) via Portainer. Multiplayer also now includes ghosts and is functional. 
+Ruby on rails webapp to play pacman in single player and multiplayer mode. Fork for usage on Ugreen Nas systems (Linux) via Portainer. Multiplayer also now includes ghosts and is functional. Both Single Player and Multiplayer now include sound.
 
 ![Landing Page](./app/assets/images/landing-page.png)
 
