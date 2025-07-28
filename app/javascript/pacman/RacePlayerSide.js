@@ -1816,21 +1816,7 @@ function saveGame(win = false)
 		save_game.disabled = false;
 	}
 } 
-//show win message
-function winMessage(){
-	//draw popup
-	ctx.fillStyle = "black";
-	ctx.strokeStyle = "green";
-	ctx.lineWidth=5;
-	ctx.fillRect(CANVAS_WIDTH/2-150, CANVAS_HEIGHT/2-40, 300, 100);
-	ctx.strokeRect(CANVAS_WIDTH/2-150, CANVAS_HEIGHT/2-40, 300, 100);
 
-	//write message
-	ctx.textAlign="center";
-	ctx.fillStyle = "white";
-	ctx.font = "16px monospace";
-	ctx.fillText("Congratulations, you won!", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+6);
-	//saveGame(true);
 }
 
 //show lose message
@@ -1852,73 +1838,6 @@ function loseMessage(){
 	//saveGame(false);
 }
 
-//update canvas for each frame. 
-function updateCanvas() {
-	restartTimer++;
-	if (gameOver()===true){
-		life--;
-		// mrPacman.dieAnimation();
-		showLives();
-		if (life>0){
-			sleep(500);
-			clearInterval(intervalId);
-			fixGrids(mrPacman.x, mrPacman.y);
-			for(var i=0; i<ghosts.length; i++){
-				fixGrids(ghosts[i].x, ghosts[i].y);
-			}
-			run();	
-		}
-		else {
-			clearInterval(intervalId);
-			sleep(500);
-			loseMessage();
-		}
-		
-	}
-	else if (pacmanWon()===true){
-		clearInterval(intervalId);
-		sleep(500);
-		winMessage();
-	}
-	else{
-		if(weakCounter>0 && weakCounter<2000/timerDelay){
-			for(var i=0; i<ghosts.length; i++){
-				ghosts[i].isBlinking = !ghosts[i].isBlinking;
-			}
-		}
-		if(weakCounter>0){
-			weakCounter--;
-		}
-		if(weakCounter===0){
-			for(var i=0; i<ghosts.length; i++){
-				ghosts[i].isDead = false;
-				ghosts[i].isWeak = false;
-				ghosts[i].isBlinking = false;
-				weakBonus= 200;
-			}
-		}
-
-		eatBean();
-		eatGhost();
-		mrPacman.move();
-
-		for(var i=0; i<ghosts.length; i++){
-			if(ghosts[i].isDead === false){
-				ghosts[i].move();
-			}
-		}
-
-	 	fixGrids(mrPacman.x, mrPacman.y);
-	 	for(var i=0; i<ghosts.length; i++){
-			fixGrids(ghosts[i].x, ghosts[i].y);
-		}
-
-	    mrPacman.draw();
-	    for(var i=0; i<ghosts.length; i++){
-			ghosts[i].draw();
-		}
-	}
-}
 
 //try to eat a bean
 function eatBean () {
