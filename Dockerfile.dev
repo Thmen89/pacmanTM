@@ -1,2 +1,13 @@
-FROM alpine:latest
-CMD ["echo", "The build was successful."]
+FROM ruby:2.7.3
+ENV LANG C.UTF-8
+ENV APP_PATH /var/app
+
+# Install system dependencies
+RUN apk -U add --no-cache build-base git postgresql-dev postgresql-client libxml2-dev libxslt-dev nodejs yarn imagemagick tzdata less sqlite-dev && rm -rf /var/cache/apk/*
+
+# Copy the entrypoint script into the image
+COPY dev-entrypoint.sh /usr/local/bin/dev-entrypoint.sh
+RUN chmod +x /usr/local/bin/dev-entrypoint.sh
+
+# Set the working directory
+WORKDIR $APP_PATH
