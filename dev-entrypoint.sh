@@ -1,6 +1,14 @@
 #!/bin/sh
 set -e
 
+# --- Start of Debugging Section ---
+echo "--- Running Entrypoint Script ---"
+echo "Current working directory is: $(pwd)"
+echo "The APP_PATH variable is set to: $APP_PATH"
+echo "Listing contents of the /var/app directory:"
+ls -la /var/app
+echo "--- End of Debugging Section ---"
+
 # Change to the application's directory
 cd $APP_PATH
 
