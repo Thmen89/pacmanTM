@@ -1965,26 +1965,6 @@ function saveGame(win = false)
 } 
 
 
-//show lose message
-function loseMessage(){
-	//draw popup
-	ctx.fillStyle = "black";
-	ctx.strokeStyle = "red";
-	ctx.lineWidth=5;
-	ctx.fillRect(CANVAS_WIDTH/2-100, CANVAS_HEIGHT/2-40, 200, 100);
-	ctx.strokeRect(CANVAS_WIDTH/2-100, CANVAS_HEIGHT/2-40, 200, 100);
-
-	//write message
-	ctx.textAlign="center";
-	ctx.fillStyle = "red";
-	ctx.font = "26px monospace";
-	ctx.fillText("GAME OVER", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+7);
-	ctx.font = "12px monospace";
-	ctx.fillText("press R to play again", CANVAS_HEIGHT/2, CANVAS_HEIGHT/2+28);
-	//saveGame(false);
-}
-
-
 //try to eat a bean
 function eatBean () {
 	if(onGridCenter(mrPacman.x, mrPacman.y)){
