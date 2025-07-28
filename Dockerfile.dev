@@ -11,7 +11,6 @@ COPY ./dev-docker-entrypoint.sh /usr/local/bin/dev-entrypoint.sh
 RUN chmod +x /usr/local/bin/dev-entrypoint.sh
 
 #setup deps for rails 
-
 RUN apk -U add --no-cache \
     build-base \
     git \
@@ -28,7 +27,6 @@ RUN apk -U add --no-cache \
     && rm -rf /var/cache/apk/* \
     && mkdir -p $APP_PATH
 
-# This section is now corrected
 RUN gem install bundler --version "$BUNDLE_VERSION" \
     && rm -rf $GEM_HOME/cache/*
 
