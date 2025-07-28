@@ -8,5 +8,8 @@ class CreateMultiplayerGames < ActiveRecord::Migration[6.1]
       t.datetime :time
       t.timestamps
     end
+
+    
+    add_index :multiplayer_games, :opponent_id
   end
 end
