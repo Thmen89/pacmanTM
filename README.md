@@ -1,5 +1,5 @@
 # Rails Pacman webapp
-Ruby on rails webapp to play pacman in single player and multiplayer mode. Currently in development.
+Ruby on rails webapp to play pacman in single player and multiplayer mode. Fork for usage on Ugreen Nas systems (Linux) via Portainer. Multiplayer also now includes ghosts and is functional. 
 
 ![Landing Page](./app/assets/images/landing-page.png)
 
@@ -24,6 +24,7 @@ A webapp to play Pacman in single player and multiplayer mode, maintain statisti
 Following features have been implemented:
 * Play single player mode Pacman as guest (without user account).
 * Play Multiplayer Mode, where two players can race with each other to finish all the pellets first :D
+* Mutiplayer now includes ghosts which can be seen by both players
 * Create user account and save your games.
 * Maintain user game statistics - high score, no of wins total games played etc.
 * View Leaderboards (Based on no of total wins, high score and total score).
@@ -52,38 +53,11 @@ The project is now hosted on ```http://127.0.0.1:3000```
 
 ### Step by Step
 
-Clone the repository:
-```
-https://github.com/squarebat/pacman.git
-cd pacman
-```
+Portainer Setup
+1. Configure docker-compose.yml as required
+2. Add Stack from Repo with following env variables
+RAILS_ENV=production
+DATABASE_URL=postgres://postgres:password@pacman_db:5432 #Change password as set in docker-compose.yml
+SECRET_KEY_BASE=[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] #64 character long min
+config.hosts="xx.xx.xx" #If using Cloudflared put link here
 
-Install required gems and webpacker to precompile js files:
-```
-bundle install
-rails webpacker:install
-```
-If bundler is not installed, you can install it using ```gem install bundler```
-
-Run all database migrations:
-```
-rails db:migrate
-```
-
-Run the server
-```
-rails server
-```
-
-It can now be accessed on ```http://127.0.0.1:3000```
-
-Alternatively, you can host it on a different port using the command ```rails server -p <port_no>```
-
-To use the multiplayer game feature, you'll have to start up a redis server on port `6379`. If you'd like to use redis on a different port, change the port number in `/app/config/cable.yml`
-
-## Status
-Project is currently in development. Feel free to create an issue and contribute :D
-
-## Credits
-
-[ziw/Javascript-Pacman](https://github.com/ziw/Javascript-Pacman) - The javascript files for the pacman gameplay obtained from this repo, were developed by Zi Wang (ziw), Bingying Xia (bxia). The files were further modified for this project.
