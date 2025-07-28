@@ -2,6 +2,71 @@
 // Group members: Zi Wang (ziw), Bingying Xia(bxia) //
 //////////////////////////////////////////////////////
 
+// Audio context for Web Audio API
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// Object to store loaded sounds
+const sounds = {};
+
+// Function to load an audio file
+async function loadSound(name, path) {
+    try {
+        const response = await fetch(path);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        sounds[name] = audioBuffer;
+    } catch (error) {
+        console.error(`Error loading sound ${name}:`, error);
+    }
+}
+
+// Function to play a sound
+function playSound(name, loop = false, volume = 1.0) {
+    if (sounds[name]) {
+        const source = audioCtx.createBufferSource();
+        source.buffer = sounds[name];
+        source.loop = loop;
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = volume;
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start(0);
+        return source; // Return source for stopping looped sounds
+    }
+    return null;
+}
+
+// Load all Pac-Man sounds
+async function initSounds() {
+    await Promise.all([
+        loadSound('start', 'Sound/start.wav'),
+        loadSound('eat_dot_0', 'Sound/eat_dot_0.wav'),
+        loadSound('eat_dot_1', 'Sound/eat_dot_1.wav'),
+        loadSound('eat_fruit', 'Sound/eat_fruit.wav'),
+        loadSound('eat_ghost', 'Sound/eat_ghost.wav'),
+        loadSound('siren0', 'Sound/siren0.wav'),
+        loadSound('siren0_firstloop', 'Sound/siren0_firstloop.wav'),
+        loadSound('siren1', 'Sound/siren1.wav'),
+        loadSound('siren1_firstloop', 'Sound/siren1_firstloop.wav'),
+        loadSound('siren2', 'Sound/siren2.wav'),
+        loadSound('siren2_firstloop', 'Sound/siren2_firstloop.wav'),
+        loadSound('siren3', 'Sound/siren3.wav'),
+        loadSound('siren3_firstloop', 'Sound/siren3_firstloop.wav'),
+        loadSound('siren4', 'Sound/siren4.wav'),
+        loadSound('siren4_firstloop', 'Sound/siren4_firstloop.wav'),
+        loadSound('fright', 'Sound/fright.wav'),
+        loadSound('fright_firstloop', 'Sound/fright_firstloop.wav'),
+        loadSound('eyes', 'Sound/eyes.wav'),
+        loadSound('eyes_firstloop', 'Sound/eyes_firstloop.wav'),
+        loadSound('death_0', 'Sound/death_0.wav'),
+        loadSound('death_1', 'Sound/death_1.wav'),
+        loadSound('extend', 'Sound/extend.wav'),
+        loadSound('credit', 'Sound/credit.wav'),
+        loadSound('intermission', 'Sound/intermission.wav')
+    ]);
+}
+
+
 function Pacman(xCord, yCord, direction){
 	this.x = xCord;
 	this.y = yCord;
@@ -1414,17 +1479,307 @@ function showLives(){
 
 //show welcome screen
 export function welcomeScreen() {
-	initFields();
-	initCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	canvas.addEventListener('keydown', onKeyDown, false);
-	canvas.setAttribute('tabindex','0');
-	canvas.focus();
-	gameOn = true;
-	gamePaused = false;
-	initMaze();
-	run();
-	//setTime();
-	return;
+    initFields();
+    initCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+    canvas.addEventListener('keydown', onKeyDown, false);
+    canvas.setAttribute('tabindex', '0');
+    canvas.focus();
+    gameOn = true;
+    gamePaused = false;
+    initMaze();
+    initSounds().then(() => {
+        playSound('credit', false, 0.7); // Play credit sound on game load
+        run();
+    });
+}
+
+// Global variables for sound management
+let ghostSirenSource = null;
+let frightSource = null;
+let eyesSource = null;
+let sirenLevel = 0; // Tracks siren0 to siren4
+let dotSoundIndex = 0; // Alternates between eat_dot_0 and eat_dot_1
+let lastScoreForExtend = 0; // Track score for extra life
+
+function countDown() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(CANVAS_HEIGHT - 85, 70, 80, 80);
+    ctx.fillStyle = "red";
+    ctx.font = "50px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("3", CANVAS_HEIGHT - 43, 130);
+    setTimeout(function () {
+        ctx.fillStyle = "black";
+        ctx.fillRect(CANVAS_HEIGHT - 85, 70, 80, 80);
+        ctx.fillStyle = "orange";
+        ctx.fillText("2", CANVAS_HEIGHT - 43, 130);
+        setTimeout(function () {
+            ctx.fillStyle = "black";
+            ctx.fillRect(CANVAS_HEIGHT - 85, 70, 80, 80);
+            ctx.fillStyle = "yellow";
+            ctx.fillText("1", CANVAS_HEIGHT - 43, 130);
+            setTimeout(function () {
+                ctx.fillStyle = "black";
+                ctx.fillRect(CANVAS_HEIGHT - 85, 70, 80, 80);
+                ctx.fillStyle = "green";
+                ctx.textAlign = "center";
+                ctx.fillText("GO", CANVAS_HEIGHT - 43, 130);
+                playSound('start', false, 0.7); // Play start sound
+                setTimeout(function () {
+                    intervalId = setInterval(updateCanvas, timerDelay);
+                    if (!isGodMode) {
+                        ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                        ghostSirenSource.onended = () => {
+                            ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                        };
+                    }
+                }, 500);
+            }, 1000);
+        }, 1000);
+    }, 1000);
+}
+
+function eatBean() {
+    if (onGridCenter(mrPacman.x, mrPacman.y)) {
+        if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType === NORMAL_BEAN) {
+            score += parseInt(10);
+            showScore();
+            beansLeft--;
+            playSound(`eat_dot_${dotSoundIndex}`, false, 0.6); // Alternate waka sounds
+            dotSoundIndex = (dotSoundIndex + 1) % 2;
+            // Update siren level based on beans eaten
+            if (beansLeft <= MAX_BEANS * 0.8 && sirenLevel < 1) {
+                sirenLevel = 1;
+                if (ghostSirenSource) {
+                    ghostSirenSource.stop();
+                    ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                    ghostSirenSource.onended = () => {
+                        ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                    };
+                }
+            } else if (beansLeft <= MAX_BEANS * 0.6 && sirenLevel < 2) {
+                sirenLevel = 2;
+                if (ghostSirenSource) {
+                    ghostSirenSource.stop();
+                    ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                    ghostSirenSource.onended = () => {
+                        ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                    };
+                }
+            } else if (beansLeft <= MAX_BEANS * 0.4 && sirenLevel < 3) {
+                sirenLevel = 3;
+                if (ghostSirenSource) {
+                    ghostSirenSource.stop();
+                    ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                    ghostSirenSource.onended = () => {
+                        ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                    };
+                }
+            } else if (beansLeft <= MAX_BEANS * 0.2 && sirenLevel < 4) {
+                sirenLevel = 4;
+                if (ghostSirenSource) {
+                    ghostSirenSource.stop();
+                    ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                    ghostSirenSource.onended = () => {
+                        ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                    };
+                }
+            }
+        } else if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType === POWER_BEAN) {
+            score += parseInt(50);
+            showScore();
+            beansLeft--;
+            for (var i = 0; i < ghosts.length; i++) {
+                ghosts[i].isWeak = true;
+            }
+            weakCounter = WEAK_DURATION;
+            playSound('eat_fruit', false, 0.7); // Play power pellet sound
+            if (ghostSirenSource) {
+                ghostSirenSource.stop();
+                ghostSirenSource = null;
+            }
+            if (!frightSource) {
+                frightSource = playSound('fright_firstloop', false, 0.5);
+                frightSource.onended = () => {
+                    frightSource = playSound('fright', true, 0.5);
+                };
+            }
+        }
+        maze[mrPacman.getRow()][mrPacman.getCol()].beanType = undefined;
+        maze[mrPacman.getRow()][mrPacman.getCol()].draw();
+    }
+}
+
+function eatGhost() {
+    for (var i = 0; i < ghosts.length; i++) {
+        if (
+            Math.abs(mrPacman.x - ghosts[i].x) <= 5 &&
+            Math.abs(mrPacman.y - ghosts[i].y) <= 5 &&
+            ghosts[i].isWeak &&
+            !ghosts[i].isDead
+        ) {
+            score += parseInt(weakBonus);
+            weakBonus *= 2;
+            showScore();
+            ghosts[i].isDead = true;
+            ghosts[i].toGhostHouse();
+            playSound('eat_ghost', false, 0.7); // Play ghost eaten sound
+            if (frightSource) {
+                frightSource.stop();
+                frightSource = null;
+            }
+            if (!eyesSource) {
+                eyesSource = playSound('eyes_firstloop', false, 0.5);
+                eyesSource.onended = () => {
+                    eyesSource = playSound('eyes', true, 0.5);
+                };
+            }
+        }
+    }
+}
+
+function updateCanvas() {
+    restartTimer++;
+    if (gameOver() === true) {
+        life--;
+        playSound('death_0', false, 0.7); // Play death sound
+        showLives();
+        if (life > 0) {
+            sleep(500);
+            clearInterval(intervalId);
+            fixGrids(mrPacman.x, mrPacman.y);
+            for (var i = 0; i < ghosts.length; i++) {
+                fixGrids(ghosts[i].x, ghosts[i].y);
+            }
+            if (ghostSirenSource) {
+                ghostSirenSource.stop();
+                ghostSirenSource = null;
+            }
+            if (frightSource) {
+                frightSource.stop();
+                frightSource = null;
+            }
+            if (eyesSource) {
+                eyesSource.stop();
+                eyesSource = null;
+            }
+            run();
+        } else {
+            clearInterval(intervalId);
+            sleep(500);
+            loseMessage();
+        }
+    } else if (pacmanWon() === true) {
+        clearInterval(intervalId);
+        sleep(500);
+        winMessage();
+    } else {
+        // Check for extra life (every 10,000 points)
+        if (score >= lastScoreForExtend + 10000) {
+            life++;
+            lastScoreForExtend = score;
+            showLives();
+            playSound('extend', false, 0.7);
+        }
+        if (weakCounter > 0 && weakCounter < 2000 / timerDelay) {
+            for (var i = 0; i < ghosts.length; i++) {
+                ghosts[i].isBlinking = !ghosts[i].isBlinking;
+            }
+        }
+        if (weakCounter > 0) {
+            weakCounter--;
+        }
+        if (weakCounter === 0) {
+            for (var i = 0; i < ghosts.length; i++) {
+                ghosts[i].isDead = false;
+                ghosts[i].isWeak = false;
+                ghosts[i].isBlinking = false;
+                weakBonus = 200;
+            }
+            if (frightSource) {
+                frightSource.stop();
+                frightSource = null;
+            }
+            if (eyesSource) {
+                eyesSource.stop();
+                eyesSource = null;
+            }
+            if (!ghostSirenSource && !isGodMode) {
+                ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                ghostSirenSource.onended = () => {
+                    ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                };
+            }
+        }
+        eatBean();
+        eatGhost();
+        mrPacman.move();
+        for (var i = 0; i < ghosts.length; i++) {
+            if (ghosts[i].isDead === false) {
+                ghosts[i].move();
+            }
+        }
+        fixGrids(mrPacman.x, mrPacman.y);
+        for (var i = 0; i < ghosts.length; i++) {
+            fixGrids(ghosts[i].x, ghosts[i].y);
+        }
+        mrPacman.draw();
+        for (var i = 0; i < ghosts.length; i++) {
+            ghosts[i].draw();
+        }
+    }
+}
+
+function loseMessage() {
+    ctx.fillStyle = "black";
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 5;
+    ctx.fillRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
+    ctx.strokeRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "red";
+    ctx.font = "26px monospace";
+    ctx.fillText("GAME OVER", CANVAS_HEIGHT / 2, CANVAS_HEIGHT / 2 + 7);
+    ctx.font = "12px monospace";
+    ctx.fillText("press R to play again", CANVAS_HEIGHT / 2, CANVAS_HEIGHT / 2 + 28);
+    playSound('death_1', false, 0.7); // Use death_1 for game over
+    if (ghostSirenSource) {
+        ghostSirenSource.stop();
+        ghostSirenSource = null;
+    }
+    if (frightSource) {
+        frightSource.stop();
+        frightSource = null;
+    }
+    if (eyesSource) {
+        eyesSource.stop();
+        eyesSource = null;
+    }
+}
+
+function winMessage() {
+    ctx.fillStyle = "black";
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 5;
+    ctx.fillRect(CANVAS_WIDTH / 2 - 150, CANVAS_HEIGHT / 2 - 40, 300, 100);
+    ctx.strokeRect(CANVAS_WIDTH / 2 - 150, CANVAS_HEIGHT / 2 - 40, 300, 100);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.font = "16px monospace";
+    ctx.fillText("Congratulations, you won!", CANVAS_HEIGHT / 2, CANVAS_HEIGHT / 2 + 6);
+    playSound('intermission', false, 0.7); // Use intermission for win
+    if (ghostSirenSource) {
+        ghostSirenSource.stop();
+        ghostSirenSource = null;
+    }
+    if (frightSource) {
+        frightSource.stop();
+        frightSource = null;
+    }
+    if (eyesSource) {
+        eyesSource.stop();
+        eyesSource = null;
+    }
 }
 
 //welcome screen animation
