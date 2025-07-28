@@ -1780,22 +1780,22 @@ function run(isGodMode) {
     
     mrPacman = new Pacman(pacmanStartLoc[1]*GRID_WIDTH + GRID_WIDTH/2, pacmanStartLoc[0]*GRID_HEIGHT + GRID_HEIGHT/2, RIGHT);
     if(isGodMode===undefined || !isGodMode){
-	    //blinky = new Ghost(0,0, RED, DOWN);
-	    //inky = new Ghost(0,0, CYAN, DOWN);
-	    //pinky = new Ghost(0,0, PINK, DOWN);
-	    //clyde = new Ghost(0,0, ORANGE, DOWN);
+	    blinky = new Ghost(0,0, RED, DOWN);
+	    inky = new Ghost(0,0, CYAN, DOWN);
+	    pinky = new Ghost(0,0, PINK, DOWN);
+	    clyde = new Ghost(0,0, ORANGE, DOWN);
 
-	    //blinky.toGhostHouse();
-	    //inky.toGhostHouse();
-	    //pinky.toGhostHouse();
-	    //clyde.toGhostHouse();
+	    blinky.toGhostHouse();
+	    inky.toGhostHouse();
+	    pinky.toGhostHouse();
+	    clyde.toGhostHouse();
 
-	    //ghosts = [blinky, inky, pinky, clyde];
+	    ghosts = [blinky, inky, pinky, clyde];
 		ghosts = [];
-	    //inky.draw();
-		//blinky.draw();
-		//pinky.draw();
-		//clyde.draw();
+	    inky.draw();
+		blinky.draw();
+		pinky.draw();
+		clyde.draw();
 	}
 	else{
 		ghosts = [];
