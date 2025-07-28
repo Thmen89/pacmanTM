@@ -1964,7 +1964,6 @@ function saveGame(win = false)
 	}
 } 
 
-}
 
 //show lose message
 function loseMessage(){
