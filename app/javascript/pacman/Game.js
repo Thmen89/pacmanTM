@@ -868,12 +868,6 @@ Grid.prototype.drawBean = function() {
 // Group members: Zi Wang (ziw), Bingying Xia(bxia) //
 //////////////////////////////////////////////////////
 
-// [KEEP ALL YOUR EXISTING Pacman, Ghost, and Grid CODE HERE]
-// ...
-// ...
-// ...
-// [THE CODE BELOW REPLACES THE 'gameSounds' object and everything after it]
-
 var canvasID = "myCanvas";
 var scoreID = "scoreDisplay";
 var highscoreID = "highScoreDisplay";
@@ -929,7 +923,7 @@ var LEFT = 3;
 var RIGHT = 4;
 
 
-// --- SOUND: NEW Web Audio API Sound Manager ---
+// --- SOUND: Web Audio API Sound Manager ---
 const gameSounds = {
     audioContext: null,
     buffers: {},
@@ -940,19 +934,23 @@ const gameSounds = {
     dotSoundIndex: 0,
     isLoaded: false,
 
-    // Initialize the Audio Context
     init: function() {
+        if (this.audioContext) return; // Prevent re-initializing
         try {
-            // Create the AudioContext. This must be done after a user gesture (like a click).
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         } catch (e) {
             console.error("Web Audio API is not supported in this browser.");
-            return;
         }
     },
 
-    // Load and decode all sounds
+    resume: function() {
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    },
+
     loadSounds: function(callback) {
+        if (!this.audioContext) return;
         const soundList = {
             start: '/sounds/start.wav',
             death: '/sounds/death_1.wav',
@@ -973,16 +971,14 @@ const gameSounds = {
                 });
         });
 
-        // When all sounds are loaded, set the flag and run the callback
         Promise.all(promises).then(() => {
             this.isLoaded = true;
             if (callback) callback();
         }).catch(error => console.error("Error loading sounds:", error));
     },
 
-    // Play a sound from the buffer
     playSound: function(name, loop = false) {
-        if (!this.isLoaded || !this.buffers[name]) return null;
+        if (!this.isLoaded || !this.buffers[name] || !this.audioContext) return null;
 
         const source = this.audioContext.createBufferSource();
         source.buffer = this.buffers[name];
@@ -995,7 +991,7 @@ const gameSounds = {
     playDot: function() {
         const soundToPlay = this.dotSoundIndex === 0 ? 'dot1' : 'dot2';
         this.playSound(soundToPlay);
-        this.dotSoundIndex = 1 - this.dotSoundIndex; // Alternate
+        this.dotSoundIndex = 1 - this.dotSoundIndex;
     },
 
     startSiren: function() {
@@ -1541,9 +1537,20 @@ function showLives(){
 
 }
 
+// SOUND: This function will update the text on the welcome screen
+function updateWelcomeScreenText(text) {
+    // Clear the previous text area
+    ctx.fillStyle = BG_COLOR;
+    ctx.fillRect(CANVAS_WIDTH/2 - 100, 235, 200, 40);
+    // Draw the new text
+    ctx.fillStyle = "white";
+    ctx.font = "14px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(text, CANVAS_WIDTH/2, 250);
+}
+
 //show welcome screen
 function welcomeScreen(){
-
 	gameOn = false;
 	gamePaused = false;
 	// welcome text
@@ -1553,9 +1560,7 @@ function welcomeScreen(){
 	ctx.fillText("PACMAN", CANVAS_WIDTH/2, 170);
 	ctx.font = "20px monospace";
 	ctx.fillText("Press s to start", CANVAS_WIDTH/2, 220);
-    // SOUND: Add loading text
-    ctx.font = "14px monospace";
-    ctx.fillText("Loading Sounds...", CANVAS_WIDTH/2, 250);
+    updateWelcomeScreenText("Loading Sounds...");
 	
 	welcomePacman = new Pacman(CANVAS_WIDTH/5, CANVAS_HEIGHT/3*2, RIGHT);
 	welcomePacman.radius = 30;
@@ -1573,15 +1578,6 @@ function welcomeScreen(){
 
 //welcome screen animation
 function updateWelcomeScreen () {
-    // SOUND: Update loading text when sounds are ready
-    if (gameSounds.isLoaded) {
-        ctx.fillStyle = BG_COLOR;
-        ctx.fillRect(CANVAS_WIDTH/2 - 100, 235, 200, 20);
-        ctx.fillStyle = "white";
-        ctx.font = "14px monospace";
-        ctx.fillText("Sounds Loaded!", CANVAS_WIDTH/2, 250);
-    }
-
 	ctx.fillStyle = BG_COLOR;
 	ctx.fillRect(0, CANVAS_HEIGHT/2, CANVAS_WIDTH,140);
 	welcomePacman.mouthOpen = !welcomePacman.mouthOpen;
@@ -1661,11 +1657,9 @@ function loseMessage(){
 function updateCanvas() {
 	restartTimer++;
 	if (gameOver()===true){
-		// SOUND: Stop all background music and play death sound
         gameSounds.stopAllLooping();
         gameSounds.playSound('death');
 		life--;
-		// mrPacman.dieAnimation();
 		showLives();
 		if (life>0){
 			sleep(500);
@@ -1684,7 +1678,6 @@ function updateCanvas() {
 		
 	}
 	else if (pacmanWon()===true){
-        // SOUND: Stop all sounds on win
         gameSounds.stopAllLooping();
 		clearInterval(intervalId);
 		sleep(500);
@@ -1700,12 +1693,11 @@ function updateCanvas() {
 			weakCounter--;
 		}
 		if(weakCounter===0){
-            // SOUND: Fright mode ended, go back to siren
             gameSounds.startSiren();
 			for(var i=0; i<ghosts.length; i++){
 				ghosts[i].isDead = false;
 				ghosts[i].isWeak = false;
-				ghosts[i.isBlinking = false];
+				ghosts[i].isBlinking = false;
 				weakBonus= 200;
 			}
 		}
@@ -1736,14 +1728,12 @@ function updateCanvas() {
 function eatBean () {
 	if(onGridCenter(mrPacman.x, mrPacman.y)){
 		if(maze[mrPacman.getRow()][mrPacman.getCol()].beanType===NORMAL_BEAN){
-			// SOUND: Play dot eating sound
             gameSounds.playDot();
 			score+= parseInt(10);
 			showScore();
 			beansLeft--;
 		}
 		else if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType===POWER_BEAN){
-			// SOUND: Play power pellet sound and switch to fright music
             gameSounds.playSound('eatFruit');
             gameSounds.startFright();
 			score+=parseInt(50);
@@ -1766,7 +1756,6 @@ function eatGhost () {
 	for(var i=0; i<ghosts.length; i++){
 		if(Math.abs(mrPacman.x-ghosts[i].x)<=5 && Math.abs(mrPacman.y-ghosts[i].y)<=5
 			&& ghosts[i].isWeak && !ghosts[i].isDead){
-            // SOUND: Play eat ghost sound
             gameSounds.playSound('eatGhost');
 			score += parseInt( weakBonus);
 			weakBonus *=2;
@@ -1816,7 +1805,6 @@ function countDown () {
 				ctx.textAlign = "center";
 				ctx.fillText("GO",CANVAS_HEIGHT-43, 130);
 				setTimeout(function  () {
-					// SOUND: Start background siren when game starts
                     gameSounds.startSiren();
 					intervalId = setInterval(updateCanvas, timerDelay);
 				},500);
@@ -1828,8 +1816,23 @@ function countDown () {
 
 
 /*==================Game Control Methods===================*/
+// SOUND: Simplified and corrected audio initialization logic
+let audioInitialized = false;
+
 //listen to keyDown event
 function onKeyDown (event) {
+    // SOUND: One-time audio initialization on the first key press of any key
+    if (!audioInitialized) {
+        audioInitialized = true;
+        gameSounds.init();
+        gameSounds.loadSounds(() => {
+            console.log("All sounds are loaded and decoded.");
+            updateWelcomeScreenText("Sounds Loaded! Press S to Start");
+        });
+    }
+    // This is crucial: browsers may suspend the context until another interaction
+    gameSounds.resume();
+
 	var keycode = event.keyCode;
 	var pauseCode = 81; //q to pause
 	var continueCode = 69; //e to resume
@@ -1847,25 +1850,6 @@ function onKeyDown (event) {
 	var rightCode = 39;
 	var downCode = 40;
 
-    // SOUND: Function to start the game after sounds are loaded
-    const startGame = (isGod = false) => {
-        if (!gameSounds.isLoaded) {
-            console.log("Sounds not loaded yet, please wait.");
-            return;
-        }
-        gameSounds.playSound('start');
-        high_score = parseInt(highScoreDisplay.innerHTML);
-        clearInterval(intervalId);
-        gameOn = true;
-        gamePaused = false;
-        if (isGod) {
-            ghosts = [];
-        }
-        initMaze();
-        run(isGod);
-        setTime();
-    };
-
 	var setTime = function ()
 	{
 		if (game_time_started != null)
@@ -1874,22 +1858,37 @@ function onKeyDown (event) {
 			game_time_started.value = new Date();
 		}
 	}
+
 	//start game
 	if(!gameOn){
-        if(keycode === sCode){
-            startGame(false);
+        // Only start if the 'S' key is pressed AND the sounds are loaded
+        if(keycode === sCode && gameSounds.isLoaded){
+            gameSounds.playSound('start');
+			high_score = parseInt(highScoreDisplay.innerHTML);
+			clearInterval(intervalId);
+			gameOn = true;
+			gamePaused = false;
+			initMaze();
+			run();
+			setTime();
 			return;
 		}
-		else if(keycode === godModeCode){
-            startGame(true);
+		else if(keycode === godModeCode && gameSounds.isLoaded){
+            gameSounds.playSound('start');
+			clearInterval(intervalId);
+			ghosts = [];
+			gameOn = true;
+			gamePaused = false;
+			initMaze();
+			run(true);
+			setTime();
 			return;
 		}
 	}
-	else{
+	else{ // Game is on
 
 		//pause game
 		if(keycode === pauseCode && !gamePaused){
-            // SOUND: Stop sounds on pause
             gameSounds.stopAllLooping();
 			high_score = parseInt(highScoreDisplay.innerHTML);
 			clearInterval(intervalId);
@@ -1900,7 +1899,6 @@ function onKeyDown (event) {
 
 		//resume game
 		if(keycode === continueCode && gamePaused){
-            // SOUND: Resume background music
             gameSounds.startSiren();
 			intervalId = setInterval(updateCanvas, timerDelay);
 			gamePaused = false;
@@ -1913,13 +1911,10 @@ function onKeyDown (event) {
 
 		//restart game
 		if( keycode === restartCode && restartTimer > 0) {
-			//can't restart game if a game was just refreshed.
-            // SOUND: Stop all sounds before restarting
             gameSounds.stopAllLooping();
 			high_score = parseInt(highScoreDisplay.innerHTML);
 			restartTimer = 0;
 			clearInterval(intervalId);
-			// SOUND: Play start music
             gameSounds.playSound('start');
 			gameOn = true;
 			gamePaused = false;
@@ -2003,21 +1998,9 @@ function run(isGodMode) {
 /*-----------GAME START-----------*/
 initFields();
 initCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-// SOUND: Initialize the sound object and pre-load sounds
-// This has to be done once the user interacts with the page.
-// We will do it on the first keydown event.
-let audioInitialized = false;
-canvas.addEventListener('keydown', (event) => {
-    if (!audioInitialized) {
-        audioInitialized = true;
-        gameSounds.init();
-        gameSounds.loadSounds(() => {
-            console.log("All sounds have been loaded and decoded.");
-            // You can update the UI here to show that sounds are ready.
-        });
-    }
-    onKeyDown(event);
-}, false);
+
+// SOUND: Attach the single, simplified event listener
+canvas.addEventListener('keydown', onKeyDown, false);
 
 canvas.setAttribute('tabindex','0');
 canvas.focus();
