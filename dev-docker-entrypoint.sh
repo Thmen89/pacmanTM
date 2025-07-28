@@ -1,19 +1,15 @@
 #!/bin/sh
 
+# Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "ENVIRONMENT: $RAILS_ENV"
+# Remove a potentially pre-existing server.pid for Rails.
+if [ -f /var/app/tmp/pids/server.pid ]; then
+  rm /var/app/tmp/pids/server.pid
+fi
 
-# Change to the application's directory
-cd $APP_PATH
-
-# Install gems if they are not already present
+# Install gems if they are not already installed
 bundle check || bundle install
 
-# remove pid from previous session
-rm -f tmp/pids/server.pid
-
-# Run migrations and start the server
-bundle exec rails db:migrate
-bundle exec rails webpacker:install
-bundle exec rails server -p 3000 -b 0.0.0.0
+# Then exec the container's main process (what's set as 'command' in docker-compose.yml).
+exec "$@"
