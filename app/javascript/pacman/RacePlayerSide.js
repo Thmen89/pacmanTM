@@ -1980,37 +1980,7 @@ function pacmanWon(){
 	return beansLeft === 0;
 }
 
-//Show a count down each time the game starts
-function countDown () {
-	ctx.fillStyle = "black";
-	ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
-	ctx.fillStyle = "red";
-	ctx.font = "50px monospace";
-	ctx.textAlign = "center";
-	ctx.fillText("3",CANVAS_HEIGHT-43, 130);
-	setTimeout(function () {
-		ctx.fillStyle = "black";
-		ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
-		ctx.fillStyle = "orange";
-		ctx.fillText("2",CANVAS_HEIGHT-43, 130);
-		setTimeout(function  () {
-				ctx.fillStyle = "black";
-			ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
-			ctx.fillStyle = "yellow";
-			ctx.fillText("1",CANVAS_HEIGHT-43, 130);
-			setTimeout(function  () {
-				ctx.fillStyle = "black";
-				ctx.fillRect(CANVAS_HEIGHT-85, 70, 80,80);
-				ctx.fillStyle = "green";
-				ctx.textAlign = "center";
-				ctx.fillText("GO",CANVAS_HEIGHT-43, 130);
-				setTimeout(function  () {
-					intervalId = setInterval(updateCanvas, timerDelay);
-				},500);
-			}, 1000);
-		}, 1000);	
-	}, 1000);
-}
+
 /*==================END UI Update Methods================*/
 
 
