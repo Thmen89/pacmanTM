@@ -1,6 +1,4 @@
 #!/bin/sh
-
-# Exit immediately if a command exits with a non-zero status.
 set -e
 
 # Remove a potentially pre-existing server.pid for Rails.
@@ -11,5 +9,5 @@ fi
 # Install gems if they are not already installed
 bundle check || bundle install
 
-# Then exec the container's main process (what's set as 'command' in docker-compose.yml).
+# Then exec the container's main process
 exec "$@"
