@@ -1638,14 +1638,14 @@ function eatGhost() {
     }
 }
 
-function updateCanvas() {
+async function updateCanvas() {
     restartTimer++;
     if (gameOver() === true) {
         life--;
-        playSound('death_0', false, 0.7); // Play death sound
+        playSound('death_0', false, 0.7);
         showLives();
         if (life > 0) {
-            sleep(500);
+            await sleep(500);
             clearInterval(intervalId);
             fixGrids(mrPacman.x, mrPacman.y);
             for (var i = 0; i < ghosts.length; i++) {
@@ -1664,22 +1664,61 @@ function updateCanvas() {
                 eyesSource = null;
             }
             run();
+            if (typeof socket !== 'undefined') {
+                socket.send(JSON.stringify({
+                    type: 'gameState',
+                    player: { x: mrPacman.x, y: mrPacman.y, dir: mrPacman.dir },
+                    score: score,
+                    lives: life,
+                    ghosts: ghosts.map(g => ({ x: g.x, y: g.y, dir: g.dir, color: g.color, isWeak: g.isWeak, isDead: g.isDead, isBlinking: g.isBlinking })),
+                    event: 'gameOver'
+                }));
+            }
         } else {
             clearInterval(intervalId);
-            sleep(500);
+            await sleep(500);
             loseMessage();
+            if (typeof socket !== 'undefined') {
+                socket.send(JSON.stringify({
+                    type: 'gameState',
+                    player: { x: mrPacman.x, y: mrPacman.y, dir: mrPacman.dir },
+                    score: score,
+                    lives: life,
+                    ghosts: ghosts.map(g => ({ x: g.x, y: g.y, dir: g.dir, color: g.color, isWeak: g.isWeak, isDead: g.isDead, isBlinking: g.isBlinking })),
+                    event: 'gameOver'
+                }));
+            }
         }
     } else if (pacmanWon() === true) {
         clearInterval(intervalId);
-        sleep(500);
+        await sleep(500);
         winMessage();
+        if (typeof socket !== 'undefined') {
+            socket.send(JSON.stringify({
+                type: 'gameState',
+                player: { x: mrPacman.x, y: mrPacman.y, dir: mrPacman.dir },
+                score: score,
+                lives: life,
+                ghosts: ghosts.map(g => ({ x: g.x, y: g.y, dir: g.dir, color: g.color, isWeak: g.isWeak, isDead: g.isDead, isBlinking: g.isBlinking })),
+                    event: 'win'
+                }));
+        }
     } else {
-        // Check for extra life (every 10,000 points)
         if (score >= lastScoreForExtend + 10000) {
             life++;
             lastScoreForExtend = score;
             showLives();
             playSound('extend', false, 0.7);
+            if (typeof socket !== 'undefined') {
+                socket.send(JSON.stringify({
+                    type: 'gameState',
+                    player: { x: mrPacman.x, y: mrPacman.y, dir: mrPacman.dir },
+                    score: score,
+                    lives: life,
+                    ghosts: ghosts.map(g => ({ x: g.x, y: g.y, dir: g.dir, color: g.color, isWeak: g.isWeak, isDead: g.isDead, isBlinking: g.isBlinking })),
+                    event: 'extraLife'
+                }));
+            }
         }
         if (weakCounter > 0 && weakCounter < 2000 / timerDelay) {
             for (var i = 0; i < ghosts.length; i++) {
@@ -1711,8 +1750,116 @@ function updateCanvas() {
                 };
             }
         }
-        eatBean();
-        eatGhost();
+        let beanEaten = null;
+        let powerPellet = false;
+        let ghostEaten = false;
+        if (onGridCenter(mrPacman.x, mrPacman.y)) {
+            if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType === NORMAL_BEAN) {
+                score += parseInt(10);
+                showScore();
+                beansLeft--;
+                beanEaten = 'normal';
+                playSound(`eat_dot_${dotSoundIndex}`, false, 0.6);
+                dotSoundIndex = (dotSoundIndex + 1) % 2;
+                if (beansLeft <= MAX_BEANS * 0.8 && sirenLevel < 1) {
+                    sirenLevel = 1;
+                    if (ghostSirenSource) {
+                        ghostSirenSource.stop();
+                        ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                        ghostSirenSource.onended = () => {
+                            ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                        };
+                    }
+                } else if (beansLeft <= MAX_BEANS * 0.6 && sirenLevel < 2) {
+                    sirenLevel = 2;
+                    if (ghostSirenSource) {
+                        ghostSirenSource.stop();
+                        ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                        ghostSirenSource.onended = () => {
+                            ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                        };
+                    }
+                } else if (beansLeft <= MAX_BEANS * 0.4 && sirenLevel < 3) {
+                    sirenLevel = 3;
+                    if (ghostSirenSource) {
+                        ghostSirenSource.stop();
+                        ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                        ghostSirenSource.onended = () => {
+                            ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                        };
+                    }
+                } else if (beansLeft <= MAX_BEANS * 0.2 && sirenLevel < 4) {
+                    sirenLevel = 4;
+                    if (ghostSirenSource) {
+                        ghostSirenSource.stop();
+                        ghostSirenSource = playSound(`siren${sirenLevel}_firstloop`, false, 0.5);
+                        ghostSirenSource.onended = () => {
+                            ghostSirenSource = playSound(`siren${sirenLevel}`, true, 0.5);
+                        };
+                    }
+                }
+            } else if (maze[mrPacman.getRow()][mrPacman.getCol()].beanType === POWER_BEAN) {
+                score += parseInt(50);
+                showScore();
+                beansLeft--;
+                beanEaten = 'power';
+                powerPellet = true;
+                for (var i = 0; i < ghosts.length; i++) {
+                    ghosts[i].isWeak = true;
+                }
+                weakCounter = WEAK_DURATION;
+                playSound('eat_fruit', false, 0.7);
+                if (ghostSirenSource) {
+                    ghostSirenSource.stop();
+                    ghostSirenSource = null;
+                }
+                if (!frightSource) {
+                    frightSource = playSound('fright_firstloop', false, 0.5);
+                    frightSource.onended = () => {
+                        frightSource = playSound('fright', true, 0.5);
+                    };
+                }
+            }
+            maze[mrPacman.getRow()][mrPacman.getCol()].beanType = undefined;
+            maze[mrPacman.getRow()][mrPacman.getCol()].draw();
+        }
+        for (var i = 0; i < ghosts.length; i++) {
+            if (
+                Math.abs(mrPacman.x - ghosts[i].x) <= 5 &&
+                Math.abs(mrPacman.y - ghosts[i].y) <= 5 &&
+                ghosts[i].isWeak &&
+                !ghosts[i].isDead
+            ) {
+                score += parseInt(weakBonus);
+                weakBonus *= 2;
+                showScore();
+                ghosts[i].isDead = true;
+                ghosts[i].toGhostHouse();
+                ghostEaten = true;
+                playSound('eat_ghost', false, 0.7);
+                if (frightSource) {
+                    frightSource.stop();
+                    frightSource = null;
+                }
+                if (!eyesSource) {
+                    eyesSource = playSound('eyes_firstloop', false, 0.5);
+                    eyesSource.onended = () => {
+                        eyesSource = playSound('eyes', true, 0.5);
+                    };
+                }
+            }
+        }
+        if (typeof socket !== 'undefined') {
+            socket.send(JSON.stringify({
+                type: 'gameState',
+                player: { x: mrPacman.x, y: mrPacman.y, dir: mrPacman.dir },
+                score: score,
+                lives: life,
+                ghosts: ghosts.map(g => ({ x: g.x, y: g.y, dir: g.dir, color: g.color, isWeak: g.isWeak, isDead: g.isDead, isBlinking: g.isBlinking })),
+                event: beanEaten ? (powerPellet ? 'powerPellet' : 'bean') : (ghostEaten ? 'ghostEaten' : null),
+                sirenLevel: sirenLevel
+            }));
+        }
         mrPacman.move();
         for (var i = 0; i < ghosts.length; i++) {
             if (ghosts[i].isDead === false) {
@@ -1730,9 +1877,9 @@ function updateCanvas() {
     }
 }
 
-function loseMessage() {
+async function loseMessage() {
     ctx.fillStyle = "black";
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = "red';
     ctx.lineWidth = 5;
     ctx.fillRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
     ctx.strokeRect(CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2 - 40, 200, 100);
@@ -1742,7 +1889,7 @@ function loseMessage() {
     ctx.fillText("GAME OVER", CANVAS_HEIGHT / 2, CANVAS_HEIGHT / 2 + 7);
     ctx.font = "12px monospace";
     ctx.fillText("press R to play again", CANVAS_HEIGHT / 2, CANVAS_HEIGHT / 2 + 28);
-    playSound('death_1', false, 0.7); // Use death_1 for game over
+    playSound('death_1', false, 0.7);
     if (ghostSirenSource) {
         ghostSirenSource.stop();
         ghostSirenSource = null;
