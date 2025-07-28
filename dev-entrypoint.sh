@@ -20,6 +20,9 @@ fi
 # Install gems if they are not already installed
 bundle check || bundle install
 
+# Compile webpacker assets
+bundle exec rails webpacker:compile
+
 # ✅ RUN MIGRATIONS
 echo "Running database migrations..."
 bundle exec rails db:migrate
