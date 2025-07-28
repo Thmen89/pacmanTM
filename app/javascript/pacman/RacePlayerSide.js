@@ -4,7 +4,14 @@
 
 // Audio context for Web Audio API
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
+// Resume audio context on user interaction
+canvas.addEventListener('click', () => {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+            console.log('AudioContext resumed');
+        }).catch(err => console.error('Error resuming AudioContext:', err));
+    }
+});
 // Object to store loaded sounds
 const sounds = {};
 
