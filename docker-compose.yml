@@ -1,40 +1,4 @@
 version: '3.7'
-
 services:
-  pacman_db:
-    image: postgres:12.5-alpine
-    container_name: pacman_db
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    networks:
-      - development
-
   pacman_app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: pacman_app
-    command: ['rails', 'server', '-p', '3000', '-b', '0.0.0.0']
-    entrypoint: /usr/local/bin/dev-entrypoint.sh
-    volumes:
-      - .:/var/app
-      - gem_cache:/usr/local/bundle
-    networks:
-      - development
-    ports:
-      - "3123:3000"
-    env_file: .env.development
-    environment:
-      RAILS_ENV: development
-    depends_on:
-      - pacman_db
-
-volumes:
-  db_data:
-  gem_cache:
-
-networks:
-  development:
+    build: .
