@@ -59,7 +59,10 @@ Portainer Setup
 2. Add Stack from Repo with following env variables
    
 A. RAILS_ENV=production #--
+
 B. DATABASE_URL=postgres://postgres:password@pacman_db:5432 #Change password as set in docker-compose.yml --
+
 C. SECRET_KEY_BASE=[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] #64 character long min --
+
 D. config.hosts="xx.xx.xx" #If using Cloudflared put link here --
 
