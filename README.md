@@ -55,9 +55,11 @@ The project is now hosted on ```http://127.0.0.1:3000```
 
 Portainer Setup
 1. Configure docker-compose.yml as required
+   
 2. Add Stack from Repo with following env variables
-RAILS_ENV=production
-DATABASE_URL=postgres://postgres:password@pacman_db:5432 #Change password as set in docker-compose.yml
-SECRET_KEY_BASE=[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] #64 character long min
-config.hosts="xx.xx.xx" #If using Cloudflared put link here
+   
+A. RAILS_ENV=production #--
+B. DATABASE_URL=postgres://postgres:password@pacman_db:5432 #Change password as set in docker-compose.yml --
+C. SECRET_KEY_BASE=[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] #64 character long min --
+D. config.hosts="xx.xx.xx" #If using Cloudflared put link here --
 
